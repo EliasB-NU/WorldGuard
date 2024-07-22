@@ -1,6 +1,7 @@
 package eu.tghd.worldguard;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -18,10 +19,23 @@ import java.util.Objects;
 
 public class Worldguard implements ModInitializer {
 
+    private LuckPerms lp;
+
     @Override
     public void onInitialize() {
-        LuckPerms lp = LuckPermsProvider.get();
+        // Register a server starting event to safely access LuckPerms
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            try {
+                lp = LuckPermsProvider.get();
+                registerEvents();
+            } catch (Exception e) {
+                // Handle the error appropriately
+                e.printStackTrace();
+            }
+        });
+    }
 
+    private void registerEvents() {
         // Hitting Blocks (Lectern & Chiseled Bookshelf)
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (player instanceof ServerPlayer playerServer) {
