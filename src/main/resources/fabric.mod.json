@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "worldguard",
+  "version": "${version}",
+  "name": "WorldGuard",
+  "description": "",
+  "authors": ["Elias Braun"],
+  "contact": {"Elias Braun":"tghd@tghd.email"},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/worldguard/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "eu.tghd.worldguard.Worldguard"
+    ]
+  },
+  "mixins": [
+    "worldguard.mixins.json",
+    {
+      "config": "worldguard.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
