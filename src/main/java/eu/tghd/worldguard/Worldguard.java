@@ -9,10 +9,12 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.context.ContextManager;
 import net.luckperms.api.query.QueryOptions;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Objects;
 
@@ -36,14 +38,16 @@ public class Worldguard implements ModInitializer {
     }
 
     private void registerEvents() {
-        // Hitting Blocks (Lectern & Chiseled Bookshelf)
+        // Hitting Blocks (Lectern & Chiseled Bookshelf & Farmland)
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (player instanceof ServerPlayer playerServer) {
                 if (world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.LECTERN
-                        || world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.CHISELED_BOOKSHELF) {
+                        || world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.CHISELED_BOOKSHELF
+                        || world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.FARMLAND) {
                     if (!hasPermission(playerServer, lp)) {
                         return InteractionResult.FAIL;
                     }
+                    return InteractionResult.PASS;
                 }
             }
             return InteractionResult.PASS;
