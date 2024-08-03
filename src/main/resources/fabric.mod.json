@@ -3,9 +3,13 @@
   "id": "worldguard",
   "version": "${version}",
   "name": "WorldGuard",
-  "description": "",
-  "authors": ["Elias Braun"],
-  "contact": {"Elias Braun":"tghd@tghd.email"},
+  "description": "Simple Mod for the RBBPixl SubServer lobbys to protect against non adventure covered stuff",
+  "authors": [
+    "Elias Braun <tghd@tghd.email>"
+  ],
+  "contact": {
+    "sources":"https://github.com/EliasB-NU/WorldGuard"
+  },
   "license": "All-Rights-Reserved",
   "icon": "assets/worldguard/icon.png",
   "environment": "server",
@@ -15,11 +19,6 @@
     ]
   },
   "mixins": [
-    "worldguard.mixins.json",
-    {
-      "config": "worldguard.client.mixins.json",
-      "environment": "client"
-    }
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",

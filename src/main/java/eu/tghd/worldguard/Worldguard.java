@@ -9,32 +9,31 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.context.ContextManager;
 import net.luckperms.api.query.QueryOptions;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
 
-public class Worldguard implements ModInitializer {
 
+public class Worldguard implements ModInitializer {
+    private final Logger logger = LoggerFactory.getLogger("WorldGuard");
     private LuckPerms lp;
 
     @Override
     public void onInitialize() {
         // Register a server starting event to safely access LuckPerms
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            try {
                 lp = LuckPermsProvider.get();
                 registerEvents();
-            } catch (Exception e) {
-                // Handle the error appropriately
-                e.printStackTrace();
-            }
+                logger.info("Registered WorldGuard events ...");
         });
+
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> logger.info("Shutting Down WorldGuard Mod..."));
     }
 
     private void registerEvents() {
@@ -43,8 +42,10 @@ public class Worldguard implements ModInitializer {
             if (player instanceof ServerPlayer playerServer) {
                 if (world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.LECTERN
                         || world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.CHISELED_BOOKSHELF
-                        || world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.FARMLAND) {
-                    if (!hasPermission(playerServer, lp)) {
+                        || world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.FARMLAND
+                        || world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.RESPAWN_ANCHOR
+                        || world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.DRAGON_EGG) {
+                    if (hasPermission(playerServer, lp)) {
                         return InteractionResult.FAIL;
                     }
                     return InteractionResult.PASS;
@@ -57,7 +58,7 @@ public class Worldguard implements ModInitializer {
         AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
             if (player instanceof ServerPlayer playerServer) {
                 if (world.getBlockState(pos).getBlock() == Blocks.FARMLAND) {
-                    if (!hasPermission(playerServer, lp)) {
+                    if (hasPermission(playerServer, lp)) {
                         return InteractionResult.FAIL;
                     }
                 }
@@ -69,8 +70,10 @@ public class Worldguard implements ModInitializer {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if (player instanceof ServerPlayer playerServer) {
                 if (entity.getType() == EntityType.ARMOR_STAND || entity.getType() == EntityType.ITEM_FRAME
-                        || entity.getType() == EntityType.GLOW_ITEM_FRAME) {
-                    if (!hasPermission(playerServer, lp)) {
+                        || entity.getType() == EntityType.GLOW_ITEM_FRAME
+                        || entity.getType() == EntityType.EGG
+                        || entity.getType() == EntityType.END_CRYSTAL) {
+                    if (hasPermission(playerServer, lp)) {
                         return InteractionResult.FAIL;
                     }
                 }
@@ -83,16 +86,15 @@ public class Worldguard implements ModInitializer {
         ContextManager cm = lp.getContextManager();
         QueryOptions qp = cm.getQueryOptions(player);
 
-        return Objects.requireNonNull(lp.getUserManager().getUser(player.getUUID()))
+        return !Objects.requireNonNull(lp.getUserManager().getUser(player.getUUID()))
                 .getCachedData()
                 .getPermissionData(qp)
                 .checkPermission("group.admin")
                 .asBoolean()
-                || Objects.requireNonNull(lp.getUserManager().getUser(player.getUUID()))
+                && !Objects.requireNonNull(lp.getUserManager().getUser(player.getUUID()))
                 .getCachedData()
                 .getPermissionData(qp)
                 .checkPermission("group.mod")
                 .asBoolean();
-
     }
 }
