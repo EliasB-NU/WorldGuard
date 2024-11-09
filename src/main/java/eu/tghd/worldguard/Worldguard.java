@@ -11,7 +11,7 @@ import net.luckperms.api.context.ContextManager;
 import net.luckperms.api.query.QueryOptions;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +23,111 @@ import java.util.Objects;
 public class Worldguard implements ModInitializer {
     private final Logger logger = LoggerFactory.getLogger("WorldGuard");
     private LuckPerms lp;
+
+    private static final Block[] restrictedBlocks = {
+            // Random stuff
+            Blocks.LECTERN,
+            Blocks.CHISELED_BOOKSHELF,
+            Blocks.FARMLAND,
+            Blocks.RESPAWN_ANCHOR,
+            Blocks.DRAGON_EGG,
+            Blocks.NETHER_WART,
+            Blocks.END_PORTAL,
+            Blocks.END_GATEWAY,
+            Blocks.LEVER,
+            Blocks.FLOWER_POT,
+            Blocks.CAKE,
+            Blocks.TNT,
+
+            // Anvil
+            Blocks.ANVIL,
+            Blocks.CHIPPED_ANVIL,
+            Blocks.DAMAGED_ANVIL,
+
+            // Furnace stuff
+            Blocks.CAMPFIRE,
+            Blocks.BLAST_FURNACE,
+            Blocks.FURNACE,
+            Blocks.SMOKER,
+
+            // Storage
+            Blocks.CHEST,
+            Blocks.TRAPPED_CHEST,
+            Blocks.BARREL,
+            Blocks.CAULDRON,
+            Blocks.DISPENSER,
+            Blocks.DROPPER,
+
+            // Fence Gates
+            Blocks.OAK_FENCE_GATE,
+            Blocks.SPRUCE_FENCE_GATE,
+            Blocks.BIRCH_FENCE_GATE,
+            Blocks.JUNGLE_FENCE_GATE,
+            Blocks.ACACIA_FENCE_GATE,
+            Blocks.DARK_OAK_FENCE_GATE,
+            Blocks.MANGROVE_FENCE_GATE,
+            Blocks.CHERRY_FENCE_GATE,
+            Blocks.BAMBOO_FENCE_GATE,
+            Blocks.CRIMSON_FENCE_GATE,
+            Blocks.WARPED_FENCE_GATE,
+
+            // Trap Doors
+            Blocks.OAK_TRAPDOOR,
+            Blocks.SPRUCE_TRAPDOOR,
+            Blocks.BIRCH_TRAPDOOR,
+            Blocks.JUNGLE_TRAPDOOR,
+            Blocks.ACACIA_TRAPDOOR,
+            Blocks.DARK_OAK_TRAPDOOR,
+            Blocks.MANGROVE_TRAPDOOR,
+            Blocks.CHERRY_TRAPDOOR,
+            Blocks.BAMBOO_TRAPDOOR,
+            Blocks.CRIMSON_TRAPDOOR,
+            Blocks.WARPED_TRAPDOOR,
+            Blocks.IRON_TRAPDOOR,
+            Blocks.COPPER_TRAPDOOR,
+            Blocks.EXPOSED_COPPER_TRAPDOOR,
+            Blocks.WEATHERED_COPPER_TRAPDOOR,
+            Blocks.OXIDIZED_COPPER_TRAPDOOR,
+            Blocks.WAXED_COPPER_TRAPDOOR,
+            Blocks.WAXED_EXPOSED_COPPER_TRAPDOOR,
+            Blocks.WAXED_WEATHERED_COPPER_TRAPDOOR,
+            Blocks.WAXED_OXIDIZED_COPPER_TRAPDOOR,
+
+
+            // Buttons
+            Blocks.OAK_BUTTON,
+            Blocks.SPRUCE_BUTTON,
+            Blocks.BIRCH_BUTTON,
+            Blocks.JUNGLE_BUTTON,
+            Blocks.ACACIA_BUTTON,
+            Blocks.DARK_OAK_BUTTON,
+            Blocks.MANGROVE_BUTTON,
+            Blocks.CHERRY_BUTTON,
+            Blocks.BAMBOO_BUTTON,
+            Blocks.CRIMSON_BUTTON,
+            Blocks.WARPED_BUTTON,
+            Blocks.STONE_BUTTON,
+            Blocks.POLISHED_BLACKSTONE_BUTTON,
+
+            // Bed
+            Blocks.WHITE_BED,
+            Blocks.LIGHT_GRAY_BED,
+            Blocks.GRAY_BED,
+            Blocks.BLACK_BED,
+            Blocks.BROWN_BED,
+            Blocks.RED_BED,
+            Blocks.ORANGE_BED,
+            Blocks.YELLOW_BED,
+            Blocks.LIME_BED,
+            Blocks.GREEN_BED,
+            Blocks.CYAN_BED,
+            Blocks.LIGHT_BLUE_BED,
+            Blocks.BLUE_BED,
+            Blocks.PURPLE_BED,
+            Blocks.MAGENTA_BED,
+            Blocks.PINK_BED,
+    };
+
 
     @Override
     public void onInitialize() {
@@ -37,15 +142,10 @@ public class Worldguard implements ModInitializer {
     }
 
     private void registerEvents() {
-        // Hitting Blocks (Lectern & Chiseled Bookshelf & Farmland)
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (player instanceof ServerPlayer playerServer) {
-                if (world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.LECTERN
-                        || world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.CHISELED_BOOKSHELF
-                        || world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.FARMLAND
-                        || world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.RESPAWN_ANCHOR
-                        || world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.DRAGON_EGG) {
-                    if (hasPermission(playerServer, lp)) {
+                if (isRestrictedBlock(world.getBlockState(hitResult.getBlockPos()).getBlock())) {
+                    if (hasPermission(playerServer, lp) && !playerServer.isCreative()) {
                         return InteractionResult.FAIL;
                     }
                     return InteractionResult.PASS;
@@ -57,8 +157,8 @@ public class Worldguard implements ModInitializer {
         // Attacking Blocks (Farmland)
         AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
             if (player instanceof ServerPlayer playerServer) {
-                if (world.getBlockState(pos).getBlock() == Blocks.FARMLAND) {
-                    if (hasPermission(playerServer, lp)) {
+                if (isRestrictedBlock(world.getBlockState(pos).getBlock())) {
+                    if (hasPermission(playerServer, lp) && !playerServer.isCreative()) {
                         return InteractionResult.FAIL;
                     }
                 }
@@ -66,16 +166,11 @@ public class Worldguard implements ModInitializer {
             return InteractionResult.PASS;
         });
 
-        // Interacting with entities (Armor Stands & Frames)
+        // Currently I don't know any entity interaction we want to allow ...
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if (player instanceof ServerPlayer playerServer) {
-                if (entity.getType() == EntityType.ARMOR_STAND || entity.getType() == EntityType.ITEM_FRAME
-                        || entity.getType() == EntityType.GLOW_ITEM_FRAME
-                        || entity.getType() == EntityType.EGG
-                        || entity.getType() == EntityType.END_CRYSTAL) {
-                    if (hasPermission(playerServer, lp)) {
-                        return InteractionResult.FAIL;
-                    }
+                if (hasPermission(playerServer, lp) && !playerServer.isCreative()) {
+                    return InteractionResult.FAIL;
                 }
             }
             return InteractionResult.PASS;
@@ -96,5 +191,14 @@ public class Worldguard implements ModInitializer {
                 .getPermissionData(qp)
                 .checkPermission("group.mod")
                 .asBoolean();
+    }
+
+    private boolean isRestrictedBlock(Block block) {
+        for (Block restrictedBlock : restrictedBlocks) {
+            if (block == restrictedBlock) {
+                return true;
+            }
+        }
+        return false;
     }
 }
