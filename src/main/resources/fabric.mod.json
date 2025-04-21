@@ -3,7 +3,7 @@
   "id": "worldguard",
   "version": "${version}",
   "name": "WorldGuard",
-  "description": "Simple Mod for the RBBPixl SubServer lobbys to protect against non adventure covered stuff",
+  "description": "Simple Mod for the RBBPixl SubServer lobby's to protect against non adventure covered stuff",
   "authors": [
     "Elias Braun <tghd@tghd.email>"
   ],
@@ -11,7 +11,6 @@
     "sources":"https://github.com/EliasB-NU/WorldGuard"
   },
   "license": "All-Rights-Reserved",
-  "icon": "assets/worldguard/icon.png",
   "environment": "server",
   "entrypoints": {
     "main": [

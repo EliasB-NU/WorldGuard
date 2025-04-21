@@ -3,4 +3,12 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="21" />
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="WorldGuard" options="-AoutRefMapFile=C:\Users\EliasBraun\Documents\GIT\WorldGuard\build\classes\java\client\client-WorldGuard-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=C:\Users\EliasBraun\Documents\GIT\WorldGuard\build\loom-cache\mixin-map-loom.mappings.1_21_4.layered+hash.2198-v2.client.tiny -AinMapFileNamedIntermediary=C:\Users\EliasBraun\.gradle\caches\fabric-loom\1.21.4\loom.mappings.1_21_4.layered+hash.2198-v2\mappings.tiny" />
+      <module name="WorldGuard.client" options="-AoutRefMapFile=C:\Users\EliasBraun\Documents\GIT\WorldGuard\build\classes\java\client\client-WorldGuard-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=C:\Users\EliasBraun\Documents\GIT\WorldGuard\build\loom-cache\mixin-map-loom.mappings.1_21_4.layered+hash.2198-v2.client.tiny -AinMapFileNamedIntermediary=C:\Users\EliasBraun\.gradle\caches\fabric-loom\1.21.4\loom.mappings.1_21_4.layered+hash.2198-v2\mappings.tiny" />
+      <module name="WorldGuard.test" options="-AoutRefMapFile=C:\Users\EliasBraun\Documents\GIT\WorldGuard\build\classes\java\test\test-WorldGuard-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=C:\Users\EliasBraun\Documents\GIT\WorldGuard\build\loom-cache\mixin-map-loom.mappings.1_21_4.layered+hash.2198-v2.test.tiny -AinMapFileNamedIntermediary=C:\Users\EliasBraun\.gradle\caches\fabric-loom\1.21.4\loom.mappings.1_21_4.layered+hash.2198-v2\mappings.tiny" />
+      <module name="eu.tghd.WorldGuard.main" options="-AoutRefMapFile=C:\Users\EliasBraun\Documents\GIT\WorldGuard\build\classes\java\main\WorldGuard-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=C:\Users\EliasBraun\Documents\GIT\WorldGuard\build\loom-cache\mixin-map-loom.mappings.1_21_4.layered+hash.2198-v2.main.tiny -AinMapFileNamedIntermediary=C:\Users\EliasBraun\.gradle\caches\fabric-loom\1.21.4\loom.mappings.1_21_4.layered+hash.2198-v2\mappings.tiny" />
+    </option>
+  </component>
 </project>
