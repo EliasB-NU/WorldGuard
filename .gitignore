@@ -51,3 +51,5 @@ gradle-app.setting
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
+!WorldGuard-1.2.jar
+
